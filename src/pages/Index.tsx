@@ -40,6 +40,12 @@ interface Leaderboard {
   date: string;
 }
 
+interface HitEffect {
+  id: number;
+  x: number;
+  y: number;
+}
+
 const Index = () => {
   const [screen, setScreen] = useState<Screen>('menu');
   const [selectedMap, setSelectedMap] = useState<Map | null>(null);
@@ -48,6 +54,9 @@ const Index = () => {
   const [enemies, setEnemies] = useState<Enemy[]>([]);
   const [bullets, setBullets] = useState<Bullet[]>([]);
   const [playerPos, setPlayerPos] = useState({ x: 400, y: 300 });
+  const [playerColor, setPlayerColor] = useState('#FFD700');
+  const [playerNickname, setPlayerNickname] = useState('Player');
+  const [hitEffects, setHitEffects] = useState<HitEffect[]>([]);
   const [keys, setKeys] = useState<Set<string>>(new Set());
   const [score, setScore] = useState(0);
   const [balance, setBalance] = useState(1000);
@@ -61,6 +70,8 @@ const Index = () => {
   const [joystickActive, setJoystickActive] = useState(false);
   const [joystickPos, setJoystickPos] = useState({ x: 0, y: 0 });
   const [canShoot, setCanShoot] = useState(true);
+  const [nicknameInput, setNicknameInput] = useState('');
+  const hitEffectIdRef = useRef(0);
   
   const gameRef = useRef<HTMLDivElement>(null);
   const bulletIdRef = useRef(0);
@@ -273,6 +284,13 @@ const Index = () => {
               if (distance < 40) {
                 hit = true;
                 const newHealth = enemy.health - stats.damage;
+                
+                const effectId = hitEffectIdRef.current++;
+                setHitEffects(effects => [...effects, { id: effectId, x: enemy.x, y: enemy.y }]);
+                setTimeout(() => {
+                  setHitEffects(effects => effects.filter(e => e.id !== effectId));
+                }, 300);
+                
                 if (newHealth <= 0) {
                   setScore(s => s + 100);
                   setBalance(b => b + 50);
@@ -300,7 +318,7 @@ const Index = () => {
   useEffect(() => {
     if (playerHealth <= 0 && screen === 'game') {
       const finalScore = score;
-      const newEntry = { name: 'You', score: finalScore, date: new Date().toISOString().split('T')[0] };
+      const newEntry = { name: playerNickname, score: finalScore, date: new Date().toISOString().split('T')[0] };
       setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.score - a.score).slice(0, 10));
       alert(`Game Over! Score: ${finalScore}`);
       setScreen('menu');
@@ -350,11 +368,48 @@ const Index = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-red-950 to-black" style={{ fontFamily: "'Press Start 2P', cursive" }}>
         <Card className="p-8 md:p-12 text-center space-y-6 bg-card border-4 border-accent gold-glow">
-          <h1 className="text-3xl md:text-5xl text-accent mb-4 drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]">PIXEL WARS</h1>
+          <h1 className="text-3xl md:text-5xl mb-4 animate-pulse" style={{
+            background: 'linear-gradient(90deg, #FF0000, #FFD700, #00FF00, #00FFFF, #0000FF, #FF00FF, #FF0000)',
+            backgroundSize: '200% 100%',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            animation: 'rgbShift 3s linear infinite'
+          }}>TANKS OF HOLD</h1>
+          <style>{`
+            @keyframes rgbShift {
+              0% { background-position: 0% 50%; }
+              100% { background-position: 200% 50%; }
+            }
+          `}</style>
           
           <div className="flex items-center justify-center gap-3 text-accent text-sm md:text-base">
             <Icon name="Coins" className="text-accent" size={24} />
             <span>{balance}</span>
+          </div>
+
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xs text-accent">Ник:</span>
+            <input 
+              type="text"
+              value={nicknameInput}
+              onChange={(e) => setNicknameInput(e.target.value)}
+              placeholder={playerNickname}
+              className="bg-muted border-2 border-accent px-2 py-1 text-xs text-foreground w-32"
+              style={{ fontFamily: "'Press Start 2P', cursive" }}
+            />
+            <Button 
+              size="sm"
+              onClick={() => {
+                if (nicknameInput.trim()) {
+                  setPlayerNickname(nicknameInput.trim());
+                  setNicknameInput('');
+                }
+              }}
+              className="bg-accent hover:bg-accent/80 text-accent-foreground text-xs px-2 py-1"
+              style={{ fontFamily: "'Press Start 2P', cursive" }}
+            >
+              ОК
+            </Button>
           </div>
 
           <div className="space-y-3">
@@ -604,6 +659,116 @@ const Index = () => {
                 </Button>
               </div>
             </Card>
+
+            <Card className="p-6 bg-muted border-4 border-accent hover:scale-105 transition-transform">
+              <div className="text-center space-y-3">
+                <div className="text-6xl">🎨</div>
+                <h3 className="text-lg text-accent">КРАСНЫЙ ТАНК</h3>
+                <p className="text-xs text-muted-foreground">Красный цвет</p>
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/80 text-accent-foreground"
+                  style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
+                  onClick={() => {
+                    if (balance >= 300) {
+                      setBalance(b => b - 300);
+                      setPlayerColor('#DC2626');
+                      alert('Цвет куплен!');
+                    }
+                  }}
+                  disabled={balance < 300}
+                >
+                  300💰
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-muted border-4 border-accent hover:scale-105 transition-transform">
+              <div className="text-center space-y-3">
+                <div className="text-6xl">🎨</div>
+                <h3 className="text-lg text-accent">СИНИЙ ТАНК</h3>
+                <p className="text-xs text-muted-foreground">Синий цвет</p>
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/80 text-accent-foreground"
+                  style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
+                  onClick={() => {
+                    if (balance >= 300) {
+                      setBalance(b => b - 300);
+                      setPlayerColor('#2563EB');
+                      alert('Цвет куплен!');
+                    }
+                  }}
+                  disabled={balance < 300}
+                >
+                  300💰
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-muted border-4 border-accent hover:scale-105 transition-transform">
+              <div className="text-center space-y-3">
+                <div className="text-6xl">🎨</div>
+                <h3 className="text-lg text-accent">ЗЕЛЕНЫЙ ТАНК</h3>
+                <p className="text-xs text-muted-foreground">Зеленый цвет</p>
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/80 text-accent-foreground"
+                  style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
+                  onClick={() => {
+                    if (balance >= 300) {
+                      setBalance(b => b - 300);
+                      setPlayerColor('#16A34A');
+                      alert('Цвет куплен!');
+                    }
+                  }}
+                  disabled={balance < 300}
+                >
+                  300💰
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-muted border-4 border-accent hover:scale-105 transition-transform">
+              <div className="text-center space-y-3">
+                <div className="text-6xl">🎨</div>
+                <h3 className="text-lg text-accent">ФИОЛЕТОВЫЙ ТАНК</h3>
+                <p className="text-xs text-muted-foreground">Фиолетовый цвет</p>
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/80 text-accent-foreground"
+                  style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
+                  onClick={() => {
+                    if (balance >= 300) {
+                      setBalance(b => b - 300);
+                      setPlayerColor('#9333EA');
+                      alert('Цвет куплен!');
+                    }
+                  }}
+                  disabled={balance < 300}
+                >
+                  300💰
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-muted border-4 border-accent hover:scale-105 transition-transform">
+              <div className="text-center space-y-3">
+                <div className="text-6xl">✨</div>
+                <h3 className="text-lg text-accent">ЗОЛОТОЙ ТАНК</h3>
+                <p className="text-xs text-muted-foreground">Легендарный золотой</p>
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/80 text-accent-foreground"
+                  style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
+                  onClick={() => {
+                    if (balance >= 1000) {
+                      setBalance(b => b - 1000);
+                      setPlayerColor('#FFD700');
+                      alert('Золотой цвет куплен!');
+                    }
+                  }}
+                  disabled={balance < 1000}
+                >
+                  1000💰
+                </Button>
+              </div>
+            </Card>
           </div>
 
           <div className="text-center pt-4">
@@ -685,11 +850,13 @@ const Index = () => {
           }}
         >
           <div 
-            className="absolute w-8 h-8 md:w-10 md:h-10 bg-accent border-2 border-accent-foreground transition-all"
+            className="absolute w-8 h-8 md:w-10 md:h-10 border-2 border-accent-foreground transition-all"
             style={{ 
               left: `${playerPos.x - 20}px`, 
               top: `${playerPos.y - 20}px`,
-              clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
+              backgroundColor: playerColor,
+              clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+              boxShadow: `0 0 15px ${playerColor}`
             }}
           />
 
@@ -718,6 +885,20 @@ const Index = () => {
               style={{ 
                 left: `${bullet.x}px`, 
                 top: `${bullet.y}px`,
+              }}
+            />
+          ))}
+
+          {hitEffects.map(effect => (
+            <div 
+              key={effect.id}
+              className="absolute w-16 h-16 animate-ping"
+              style={{ 
+                left: `${effect.x - 32}px`, 
+                top: `${effect.y - 32}px`,
+                backgroundColor: 'rgba(255, 215, 0, 0.5)',
+                borderRadius: '50%',
+                pointerEvents: 'none'
               }}
             />
           ))}
