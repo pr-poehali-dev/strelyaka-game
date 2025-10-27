@@ -6,33 +6,33 @@
 
 @layer base {
   :root {
-    --background: 218 27% 12%;
-    --foreground: 0 0% 95%;
+    --background: 0 0% 8%;
+    --foreground: 45 100% 90%;
 
-    --card: 217 24% 18%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 20% 12%;
+    --card-foreground: 45 100% 90%;
 
-    --popover: 217 24% 18%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 20% 12%;
+    --popover-foreground: 45 100% 90%;
 
-    --primary: 351 83% 61%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 85% 55%;
+    --primary-foreground: 45 100% 95%;
 
-    --secondary: 210 60% 22%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 45 95% 55%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 217 24% 25%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 10% 20%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 351 83% 61%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 95% 55%;
+    --accent-foreground: 0 0% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 45 100% 95%;
 
-    --border: 217 24% 25%;
-    --input: 217 24% 25%;
-    --ring: 351 83% 61%;
+    --border: 0 20% 25%;
+    --input: 0 20% 25%;
+    --ring: 45 95% 55%;
 
     --radius: 0rem;
 
@@ -99,5 +99,15 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .gold-glow {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .red-glow {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
   }
 }
