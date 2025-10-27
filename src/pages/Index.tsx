@@ -61,7 +61,7 @@ const Index = () => {
   const [score, setScore] = useState(0);
   const [balance, setBalance] = useState(1000);
   const [killCount, setKillCount] = useState(0);
-  const [stats, setStats] = useState<Stats>({ damage: 25, speed: 5, maxHealth: 100, fireRate: 300 });
+  const [stats, setStats] = useState<Stats>({ damage: 25, speed: 8, maxHealth: 100, fireRate: 300 });
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([
     { name: 'Player1', score: 5000, date: '2025-10-27' },
     { name: 'Player2', score: 3500, date: '2025-10-27' },
@@ -357,7 +357,7 @@ const Index = () => {
     setStats(prev => {
       const newStats = { ...prev };
       if (stat === 'damage') newStats.damage += 10;
-      if (stat === 'speed') newStats.speed += 1;
+      if (stat === 'speed') newStats.speed += 2;
       if (stat === 'maxHealth') newStats.maxHealth += 25;
       if (stat === 'fireRate') newStats.fireRate = Math.max(100, newStats.fireRate - 50);
       return newStats;
@@ -515,7 +515,7 @@ const Index = () => {
                   className="bg-accent hover:bg-accent/80 text-accent-foreground"
                   style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}
                 >
-                  +1 (150💰)
+                  +2 (150💰)
                 </Button>
               </div>
             </div>
