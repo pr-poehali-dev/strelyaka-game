@@ -270,7 +270,7 @@ const Index = () => {
               const dy = bullet.y - enemy.y;
               const distance = Math.sqrt(dx * dx + dy * dy);
               
-              if (distance < 30) {
+              if (distance < 40) {
                 hit = true;
                 const newHealth = enemy.health - stats.damage;
                 if (newHealth <= 0) {
@@ -685,10 +685,10 @@ const Index = () => {
           }}
         >
           <div 
-            className="absolute w-6 h-6 md:w-8 md:h-8 bg-accent border-2 border-accent-foreground transition-all"
+            className="absolute w-8 h-8 md:w-10 md:h-10 bg-accent border-2 border-accent-foreground transition-all"
             style={{ 
-              left: `${playerPos.x - 16}px`, 
-              top: `${playerPos.y - 16}px`,
+              left: `${playerPos.x - 20}px`, 
+              top: `${playerPos.y - 20}px`,
               clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
             }}
           />
@@ -696,10 +696,10 @@ const Index = () => {
           {enemies.map(enemy => (
             <div 
               key={enemy.id}
-              className="absolute w-6 h-6 md:w-8 md:h-8 bg-primary border-2 border-primary-foreground"
+              className="absolute w-10 h-10 md:w-12 md:h-12 bg-primary border-2 border-primary-foreground"
               style={{ 
-                left: `${enemy.x - 16}px`, 
-                top: `${enemy.y - 16}px`,
+                left: `${enemy.x - 20}px`, 
+                top: `${enemy.y - 20}px`,
               }}
             >
               <div className="w-full h-1 bg-muted mt-[-6px]">
@@ -714,7 +714,7 @@ const Index = () => {
           {bullets.map(bullet => (
             <div 
               key={bullet.id}
-              className={`absolute w-1.5 h-1.5 md:w-2 md:h-2 ${bullet.isEnemy ? 'bg-red-500 border border-red-300' : 'bg-yellow-400 border border-yellow-200'}`}
+              className={`absolute w-2 h-2 md:w-3 md:h-3 ${bullet.isEnemy ? 'bg-red-500 border border-red-300' : 'bg-yellow-400 border border-yellow-200'}`}
               style={{ 
                 left: `${bullet.x}px`, 
                 top: `${bullet.y}px`,
